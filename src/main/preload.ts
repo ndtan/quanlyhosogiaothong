@@ -22,6 +22,17 @@ const electronHandler = {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
   },
+  DB: {
+    all(sql, params) {
+      return ipcRenderer.invoke('DBAll', sql, params);
+    },
+    get(sql, params) {
+      return ipcRenderer.invoke('DBGet', sql, params);
+    },
+    run(sql, params) {
+      return ipcRenderer.invoke('DBRun', sql, params);
+    }
+  }
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

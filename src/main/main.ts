@@ -8,12 +8,14 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import Database from 'better-sqlite3';
+import path from 'path';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import {DBAll, DBGet, DBRun} from "./database";
 
 class AppUpdater {
   constructor() {
@@ -133,5 +135,11 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+
+    ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
+    ipcMain.handle('DBGet', (event, sql, params) => DBGet(sql, params));
+    ipcMain.handle('DBRun', (event, sql, params) => DBRun(sql, params));
+    // ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
+
   })
   .catch(console.log);
