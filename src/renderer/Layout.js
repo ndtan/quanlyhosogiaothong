@@ -39,12 +39,7 @@ export default function ({props}) {
       />
     </Header>
     <Content style={{ padding: 8, overflowY: "auto", flexGrow: 1 }}>
-      <div
-        style={{
-          padding: 24,
-          borderRadius: 8,
-        }}
-      >
+      <div style={{borderRadius: 8}}>
         <Outlet />
       </div>
     </Content>

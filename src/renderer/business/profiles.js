@@ -1,5 +1,5 @@
 export function getProfiles(params) {
-
+  return window.electron.DB.all("SELECT * FROM profiles", params);
 }
 
 export function createProfile(data) {

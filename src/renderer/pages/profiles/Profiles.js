@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Breadcrumb, Layout} from 'antd';
 import {EllipsisOutlined, PlusOutlined} from '@ant-design/icons';
 import {ProTable, TableDropdown} from '@ant-design/pro-components';
@@ -6,41 +6,8 @@ import {Button, Dropdown, Space, Tag} from 'antd';
 import {Outlet, Link} from 'react-router-dom';
 import {getOfficers} from "../../business/officers";
 import icon from "../../../../assets/icon.svg";
-
-// export default function Profiles() {
-//   const [officers, setOfficers] = useState([]);
-//
-//   useEffect(() => {
-//     getOfficers({}).then(officers => setOfficers(officers));
-//     // createOfficer({}).then(info => console.log('info', info))
-//     //   .catch(error => console.warn(error));
-//   }, []);
-//
-//   console.log('officers', officers);
-//
-//   return (
-//     <div>
-//       <h1>Profiles</h1>
-//       {officers.map(o => <div key={o.id}>
-//         <span>{o.id}</span>
-//         <span>{o.name}</span>
-//         <span>{o.birthday}</span>
-//       </div>)}
-//       {officers.map(o => <div key={o.id}>
-//         <span>{o.id}</span>
-//         <span>{o.name}</span>
-//         <span>{o.birthday}</span>
-//       </div>)}
-//       {officers.map(o => <div key={o.id}>
-//         <span>{o.id}</span>
-//         <span>{o.name}</span>
-//         <span>{o.birthday}</span>
-//       </div>)}
-//     </div>
-//   );
-// }
-
 import {useRef} from 'react';
+import {getProfiles} from "../../business/profiles";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -56,16 +23,34 @@ export const waitTime = async (time = 100) => {
 
 const columns = [
   {
+    title: 'STT',
     dataIndex: 'index',
     valueType: 'indexBorder',
     width: 48,
   },
   {
-    title: 'Biển số',
+    title: 'Biển số xe',
     dataIndex: 'plate',
-    copyable: true,
     ellipsis: true,
-    tip: 'Title',
+    fieldProps: { placeholder: "Tìm biển số xe..." },
+    formItemProps: {
+      rules: [
+        {
+          required: true,
+          message: 'Required',
+        },
+      ],
+
+    },
+  },
+  {
+    title: 'Nội dung nhập hồ sơ',
+    dataIndex: 'content',
+    // copyable: true,
+    // ellipsis: true,
+    // tip: 'Title',
+    hideInSearch: true,
+    fieldProps: { placeholder: "Nhập biển số..." },
     formItemProps: {
       rules: [
         {
@@ -76,11 +61,12 @@ const columns = [
     },
   },
   {
-    title: 'Nội dung',
-    dataIndex: 'content',
-    copyable: true,
-    ellipsis: true,
-    tip: 'Title',
+    title: 'Cán bộ nhập hồ sơ',
+    dataIndex: 'created_by',
+    fieldProps: { placeholder: "Tìm theo cán bộ..." },
+    // copyable: true,
+    // ellipsis: true,
+    // tip: 'Title',
     formItemProps: {
       rules: [
         {
@@ -133,14 +119,14 @@ const columns = [
   //     </Space>
   //   ),
   // },
-  // {
-  //   title: 'showTime',
-  //   key: 'showTime',
-  //   dataIndex: 'created_at',
-  //   valueType: 'date',
-  //   sorter: true,
-  //   hideInSearch: true,
-  // },
+  {
+    title: 'Ngày nhập',
+    key: 'created_at',
+    dataIndex: 'created_at',
+    valueType: 'date',
+    // sorter: true,
+    hideInSearch: true,
+  },
   // {
   //   title: 'created_at',
   //   dataIndex: 'created_at',
@@ -183,23 +169,65 @@ const columns = [
   // },
 ];
 
+function _getProfiles() {
+  return getProfiles({}).then(profiles=>{
+    console.log('profiles', profiles);
+    return profiles;
+  }).then(profiles => ({
+    data: profiles,
+    success: true,
+    total: 27
+  }))
+}
+
+const viVN = {
+  tableForm: {
+    search: 'Query',
+    reset: 'Reset',
+    submit: 'Submit',
+    collapsed: 'Mở rộng',
+    expand: 'Thu gọn',
+    inputPlaceholder: 'Please enter',
+    selectPlaceholder: 'Please select',
+  },
+  alert: {
+    clear: 'Clear',
+  },
+  tableToolBar: {
+    leftPin: 'Pin to left',
+    rightPin: 'Pin to right',
+    noPin: 'Unpinned',
+    leftFixedTitle: 'Fixed the left',
+    rightFixedTitle: 'Fixed the right',
+    noFixedTitle: 'Not Fixed',
+    reset: 'Reset',
+    columnDisplay: 'Column Display',
+    columnSetting: 'Settings',
+    fullScreen: 'Full Screen',
+    exitFullScreen: 'Exit Full Screen',
+    reload: 'Refresh',
+    density: 'Density',
+    densityDefault: 'Default',
+    densityLarger: 'Larger',
+    densityMiddle: 'Middle',
+    densitySmall: 'Compact',
+  },
+};
+import { ProProvider, createIntl } from '@ant-design/pro-components';
+const enUSIntl = createIntl('en_US', viVN);
+
 export default () => {
+  const values = useContext(ProProvider);
   const actionRef = useRef();
   return (
+    <ProProvider.Provider value={{ ...values, intl: enUSIntl }}>
     <ProTable
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params, sort, filter) => {
-        console.log(sort, filter);
         await waitTime(500);
-        return {
-          data: [
-            {plate: '73A-HDK', content: "Cấp mới"}
-          ],
-          success: true,
-          total: 17
-        };
+        return _getProfiles();
       }}
       editable={{
         type: 'multiple',
@@ -217,8 +245,12 @@ export default () => {
       rowKey="id"
       search={{
         labelWidth: 'auto',
+        searchText: "Tìm kiếm",
+        resetText: "Xóa bộ lọc",
+        expandText: "Mở rộng"
       }}
       options={{
+        fullScreen: true,
         setting: {
           listsHeight: 400,
         },
@@ -236,8 +268,18 @@ export default () => {
         },
       }}
       pagination={{
-        pageSize: 5,
+        defaultPageSize: 10, showSizeChanger: true, hideOnSinglePage: false,
+        showTotal: (total, range) => `Từ ${range[0]} đến ${range[1]} của ${total} hồ sơ`,
         onChange: (page) => console.log(page),
+        locale: {
+          items_per_page: "Hồ sơ mỗi trang",
+          jump_to: "Nhảy đến",
+          jump_to_confirm:"Xác nhận nhảy đến",
+          page: "trang",
+          prev_page: "trang trước",
+          next_page: "trang sau",
+          page_size:"kích thước trang"
+        }
       }}
       dateFormatter="string"
       headerTitle="Hồ sơ phương tiện giao thông"
@@ -250,7 +292,7 @@ export default () => {
           }}
           type="primary"
         >
-          新建
+          Thêm mới hồ sơ
         </Button>,
         <Dropdown
           key="menu"
@@ -277,5 +319,6 @@ export default () => {
         </Dropdown>,
       ]}
     />
+    </ProProvider.Provider>
   );
 };
