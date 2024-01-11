@@ -8,7 +8,7 @@ export function createOfficer(data = {}) {
 }
 
 export function getOfficer(id) {
-
+  return window.electron.DB.get("SELECT *, date(birthday, 'unixepoch', 'localtime') as birthday FROM OFFICERS WHERE id=$id", {id});
 }
 
 export function updateOfficer(id, data) {
