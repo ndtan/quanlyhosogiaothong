@@ -1,4 +1,4 @@
-export function getManipulation(params) {
+export function getManipulations(params) {
 
 }
 

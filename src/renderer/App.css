@@ -20,6 +20,10 @@ body {
   margin: 0;
 }
 
+.form-manipulation #plate_help {
+  display: none;
+}
+
 /*button {*/
 /*  background-color: white;*/
 /*  padding: 10px 20px;*/

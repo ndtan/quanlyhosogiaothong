@@ -1,16 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Breadcrumb, Layout} from 'antd';
+import {Breadcrumb, Form, Layout, message} from 'antd';
 import {EllipsisOutlined, PlusOutlined} from '@ant-design/icons';
-import {ProTable, TableDropdown} from '@ant-design/pro-components';
+import {ModalForm, ProForm, ProFormSelect, ProFormText, ProTable, TableDropdown, ProCard} from '@ant-design/pro-components';
 import {Button, Dropdown, Space, Tag} from 'antd';
 import {Outlet, Link} from 'react-router-dom';
 import {ProProvider, createIntl} from '@ant-design/pro-components';
 import {getOfficers} from "../../business/officers";
 import icon from "../../../../assets/icon.svg";
 import {useRef} from 'react';
-import {getProfiles} from "../../business/profiles";
-import ProfileCreate from "./ProfileCreate";
-import ProfileDetail from "./ProfileDetail";
+import {createProfile, getProfileByPlate, getProfiles} from "../../business/profiles";
+import ProfileDetail from "./ProfileManipulate";
+import {ProFormDatePicker} from "@ant-design/pro-form";
+import ProfileManipulate from "./ProfileManipulate";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -115,40 +116,13 @@ const columns = [
       rules: [{required: true, message: 'Chọn ngày nhập'}],
     },
   },
-  // {
-  //   title: "Ngày nhập",
-  //   key: 'created_at',
-  //   dataIndex: 'created_at',
-  //   valueType: 'dateRange',
-  //   render: (_, profiles) => (new Date(profiles.created_at)).toLocaleDateString(),
-  //   search: {
-  //     transform: (range) => ({
-  //       created_at_from: range[0] + ' 00:00:00',
-  //       created_at_to: range[1] + ' 23:59:59',
-  //     }),
-  //   },
-  // },
   {
     title: 'Tùy chọn',
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => [
-      // <a key="editable"
-      //    onClick={() => {
-      //      action?.startEditable?.(record.id);
-      //    }}
-      // >
-      //   Edit
-      // </a>,
-      <ProfileDetail key="detail" profile_id={record.id} trigger={<a key="detail" onClick={() => {}}>Xem</a>} />,
-      // <TableDropdown
-      //   key="actionGroup"
-      //   onSelect={() => action?.reload()}
-      //   menus={[
-      //     {key: 'copy', name: 'copy'},
-      //     {key: 'delete', name: 'delete'},
-      //   ]}
-      // />,
+      <a key="detail" onClick={() => {
+      }}>Bổ sung</a>,
     ],
   },
 ];
@@ -173,8 +147,52 @@ const enUSIntl = createIntl('en_US', viVN);
 export default () => {
   const values = useContext(ProProvider);
   const actionRef = useRef();
+  const [profile, setProfile] = useState();
+  const [modalVisit, setModalVisit] = useState(false);
+  const [form] = Form.useForm();
   return (
     <ProProvider.Provider value={{...values, intl: enUSIntl}}>
+      <ProCard layout="center" bordered style={{marginBottom: 8}}>
+        <ProForm
+          title="Khai thác hồ sơ"
+          form={form}
+          layout={'inline'}
+          autoFocusFirstInput
+          submitTimeout={2000}
+          className={'form-manipulation'}
+          submitter={{
+            searchConfig: {submitText: 'Khai thác'},
+            resetButtonProps: {style: {display: 'none'}},
+          }}
+          onFinish={async (values) => {
+            try {
+              console.log('values', values);
+              const profile = await getProfileByPlate(values?.plate);
+              if (!profile) {
+                message.error("Không tìm thấy biển số xe.")
+                return false;
+              }
+              console.log('profile', profile);
+              setProfile(profile);
+              setModalVisit(true);
+            } catch (err) {
+              message.error(err.toString());
+              return false;
+            }
+          }}
+        >
+          <ProForm.Group>
+            <ProFormText
+              width="md"
+              name="plate"
+              placeholder="Nhập biển số xe để khai thác"
+              formItemProps={{rules: [{required: true, message: 'Nhập biển số xe'}]}}
+            />
+          </ProForm.Group>
+        </ProForm>
+        <ProfileManipulate profile_id={profile?.id} open={modalVisit} requestClose={()=>setModalVisit(false)} />
+      </ProCard>
+
       <ProTable
         columns={columns}
         actionRef={actionRef}
@@ -184,49 +202,15 @@ export default () => {
           console.log('sort', sort);
           console.log('filter', filter);
           sort.id = 'desc';
-          await waitTime(100);
+          await waitTime(500);
           return _getProfiles(params, sort, filter);
         }}
-        // editable={{
-        //   type: 'multiple',
-        //   onSave: async (rowKey, data, row) => {
-        //     console.log(rowKey, data, row);
-        //     await waitTime(2000);
-        //     // throw "Khong the cap nhat"
-        //   },
-        // }}
-        // columnsState={{
-        //   persistenceKey: 'pro-table-singe-demos',
-        //   persistenceType: 'localStorage',
-        //   defaultValue: {
-        //     option: {fixed: 'right', disable: true},
-        //   },
-        //   onChange(value) {
-        //     console.log('value: ', value);
-        //   },
-        // }}
         rowKey="id"
-        search={{
-          labelWidth: 'auto',
-          searchText: "Tìm kiếm",
-          resetText: "Xóa bộ lọc"
-        }}
+        search={false}
         options={{
           fullScreen: true,
           setting: {
             listsHeight: 300,
-          },
-        }}
-        form={{
-          // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-          syncToUrl: (values, type) => {
-            if (type === 'get') {
-              return {
-                ...values,
-                created_at: [values.startTime, values.endTime],
-              };
-            }
-            return values;
           },
         }}
         pagination={{
@@ -244,41 +228,12 @@ export default () => {
           }
         }}
         dateFormatter="string"
-        headerTitle="Hồ sơ phương tiện giao thông"
+        headerTitle="Hồ sơ đang khai thác"
         toolBarRender={() => [
-          <ProfileCreate trigger={<Button
-            key="button"
-            icon={<PlusOutlined/>}
-            onClick={() => {
-              actionRef.current?.reload();
-            }}
-            type="primary"
-          >
-            Thêm mới hồ sơ
-          </Button>}/>,
-          // <Dropdown
-          //   key="menu"
-          //   menu={{
-          //     items: [
-          //       {
-          //         label: '1st item',
-          //         key: '1',
-          //       },
-          //       {
-          //         label: '2nd item',
-          //         key: '1',
-          //       },
-          //       {
-          //         label: '3rd item',
-          //         key: '1',
-          //       },
-          //     ],
-          //   }}
-          // >
-          //   <Button>
-          //     <EllipsisOutlined/>
-          //   </Button>
-          // </Dropdown>,
+          <a key="export" onClick={() => {
+          }}>
+            Xuất danh sách
+          </a>,
         ]}
       />
     </ProProvider.Provider>

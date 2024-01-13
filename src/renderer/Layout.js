@@ -6,7 +6,7 @@ const { Header, Content, Footer } = Layout;
 
 const items = [
   {key: 'profiles', label: "Hồ sơ", to: '/'},
-  {key: 'manipulation', label: "Khai thác"},
+  {key: 'manipulations', label: "Khai thác", to: '/manipulations'},
   {key: 'return', label: "Bổ sung"},
   {key: 'officers', label: "Cán bộ", to: '/officers'},
   {key: 'backup', label: "Sao lưu"}
@@ -38,7 +38,7 @@ export default function ({props}) {
         }}
       />
     </Header>
-    <Content style={{ padding: 8, overflowY: "auto", flexGrow: 1 }}>
+    <Content style={{ padding: 8, overflowY: "scroll", flexGrow: 1 }}>
       <div style={{borderRadius: 8}}>
         <Outlet />
       </div>

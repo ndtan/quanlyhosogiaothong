@@ -34,7 +34,12 @@ export async function createProfile(data) {
 }
 
 export function getProfile(id) {
+  return window.electron.DB.get("SELECT *, date(created_at, 'unixepoch', 'localtime') as created_at FROM profiles WHERE id=$id", {id});
+}
 
+export function getProfileByPlate(plate) {
+  const plain_plate = plate?.replace(/[^a-zA-Z0-9 ]/g, '');
+  return window.electron.DB.get("SELECT *, date(created_at, 'unixepoch', 'localtime') as created_at FROM profiles WHERE plain_plate=$plain_plate", {plain_plate});
 }
 
 export function updateProfile(id, data) {
