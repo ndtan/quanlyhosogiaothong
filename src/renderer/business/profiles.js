@@ -1,7 +1,7 @@
 import {getOfficer} from "./officers";
 
 export function getProfiles(params = {}, sort = {}, filter = {}) {
-  let sql = "SELECT * FROM profiles WHERE 1";
+  let sql = "SELECT *, date(created_at, 'unixepoch', 'localtime') as created_at FROM profiles WHERE 1";
   const sqlParams = {};
   const plain_plate = params.plate?.trim().length > 0 ? params.plate.replace(/[^a-zA-Z0-9 ]/g, '') : null;
   if (plain_plate) {

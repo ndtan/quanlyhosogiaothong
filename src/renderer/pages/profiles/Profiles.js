@@ -129,6 +129,14 @@ const columns = [
   //   },
   // },
   {
+    title: 'Trạng thái',
+    key: 'last_action',
+    dataIndex: 'last_action',
+    hideInSearch: true,
+    hideInform: true,
+    fieldProps: {placeholder: "Chọn cán bộ nhập"},
+  },
+  {
     title: 'Tùy chọn',
     valueType: 'option',
     key: 'option',
@@ -159,7 +167,6 @@ function _getProfiles(params, sort, filter) {
       console.log('profiles', profiles);
       return profiles
     })
-    .then(profiles => profiles.map(p => ({...p, created_at: p.created_at * 1000})))
     .then(profiles => ({
       data: profiles,
       success: true,
