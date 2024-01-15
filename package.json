@@ -98,6 +98,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/pro-components": "^2.6.43",
+    "@ant-design/pro-form": "^2.24.1",
     "antd": "^5.12.8",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",

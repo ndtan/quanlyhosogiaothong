@@ -7,6 +7,7 @@ import Layout from "./Layout";
 import Officers from "./pages/officers/Officers";
 import Profiles from "./pages/profiles/Profiles";
 import Manipulations from "./pages/manipulations/Manipulations";
+import Return from "./pages/return/Return";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Profiles />} />
           <Route path={"manipulations"} element={<Manipulations />} />
+          <Route path={"return"} element={<Return />} />
           <Route path={"officers"} element={<Officers />} />
         </Route>
       </Routes>

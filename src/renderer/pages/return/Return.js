@@ -9,8 +9,8 @@ import {getOfficers} from "../../business/officers";
 import icon from "../../../../assets/icon.svg";
 import {useRef} from 'react';
 import {createProfile, getProfileByPlate, getProfiles} from "../../business/profiles";
-import ManipulateCreate from "./ManipulateCreate";
-import {getManipulations} from "../../business/manipulations";
+import ReturnProfile from "./ReturnProfile";
+import {getManipulationByPlateForReturn, getManipulations, getManipulationsReturn} from "../../business/manipulations";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -78,7 +78,7 @@ const columns = [
     },
   },
   {
-    title: 'Ngày khai thác',
+    title: 'Ngày đề nghị khai thác',
     key: 'manipulated_at',
     dataIndex: 'manipulated_at',
     valueType: 'date',
@@ -115,29 +115,41 @@ const columns = [
       rules: [{required: true, message: 'Nhập lý do khai thác'}],
     },
   },
-
   {
-    title: 'Tùy chọn',
-    valueType: 'option',
-    key: 'option',
-    render: (text, record, _, action) => [
-      <a key="detail" onClick={() => {}}>Bổ sung</a>,
-    ],
+    title: 'Ngày bổ sung',
+    key: 'return_at',
+    dataIndex: 'return_at',
+    valueType: 'date',
+    // sorter: true,
+    hideInSearch: true,
+    fieldProps: {placeholder: "Chọn ngày bổ sung", format: 'DD/MM/YYYY'},
+    formItemProps: {
+      rules: [{required: true, message: 'Chọn ngày bổ sung'}],
+    },
+  },
+  {
+    title: 'Cán bộ bổ sung',
+    dataIndex: 'return_by',
+    fieldProps: {placeholder: "Chọn cán bộ bổ sung"},
+    formItemProps: {
+      rules: [{required: true, message: 'Chọn cán bộ bổ sung'}],
+    },
   },
 ];
 
 function _getManipulations(params, sort, filter) {
-  return getManipulations(params, sort, filter)
+  return getManipulationsReturn(params, sort, filter)
     .then(manipulations => {
-      console.log('getManipulations', manipulations);
+      console.log('manipulations', manipulations);
       return manipulations
     })
+    .then(manipulations => manipulations.map(p => ({...p, created_at: p.created_at * 1000})))
     .then(manipulations => ({
       data: manipulations,
       success: true,
       total: manipulations.length < params.pageSize ? ((params.current - 1) * params.pageSize + manipulations.length)
         : (params.current * params.pageSize + 1)
-    }));
+    }))
 }
 
 const enUSIntl = createIntl('en_US', viVN);
@@ -152,14 +164,14 @@ export default () => {
     <ProProvider.Provider value={{...values, intl: enUSIntl}}>
       <ProCard layout="center" bordered style={{marginBottom: 8}}>
         <ProForm
-          title="Khai thác hồ sơ"
+          title="Bổ sung hồ sơ"
           form={form}
           layout={'inline'}
           autoFocusFirstInput
           submitTimeout={2000}
           className={'form-manipulation'}
           submitter={{
-            searchConfig: {submitText: 'Khai thác'},
+            searchConfig: {submitText: 'Bổ sung'},
             resetButtonProps: {style: {display: 'none'}},
           }}
           onFinish={async (values) => {
@@ -168,6 +180,10 @@ export default () => {
               const profile = await getProfileByPlate(values?.plate);
               if (!profile) {
                 message.error("Không tìm thấy biển số xe.")
+                return false;
+              }
+              if (profile.last_action == null || profile.last_action === 'return') {
+                message.error("Xe chưa được khai thác.")
                 return false;
               }
               console.log('profile', profile);
@@ -183,12 +199,12 @@ export default () => {
             <ProFormText
               width="md"
               name="plate"
-              placeholder="Nhập biển số xe đề nghị khai thác"
-              formItemProps={{rules: [{required: true, message: 'Nhập biển số xe đề nghị khai thác'}]}}
+              placeholder="Nhập biển số xe để bổ sung"
+              formItemProps={{rules: [{required: true, message: 'Nhập biển số xe để bổ sung'}]}}
             />
           </ProForm.Group>
         </ProForm>
-        <ManipulateCreate profile_id={profile?.id} open={modalVisit} requestClose={()=>setModalVisit(false)} />
+        <ReturnProfile profile_id={profile?.id} open={modalVisit} requestClose={()=>setModalVisit(false)} />
       </ProCard>
 
       <ProTable
@@ -227,11 +243,9 @@ export default () => {
           }
         }}
         dateFormatter="string"
-        headerTitle="Hồ sơ đang khai thác"
+        headerTitle="Hồ sơ vừa bổ sung"
         toolBarRender={() => [
-          <a key="export" onClick={() => {}}>
-            Xuất danh sách
-          </a>,
+          <a key="export" onClick={() => {}}>Xuất danh sách</a>,
         ]}
       />
     </ProProvider.Provider>

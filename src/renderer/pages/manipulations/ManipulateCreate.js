@@ -26,14 +26,14 @@ const waitTime = (time = 100) => {
 
 let _places;
 
-export default ({profile_id, trigger, open, requestClose}) => {
+export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
   const actionRef = useRef();
   const [form] = Form.useForm();
   const [profile, setProfile] = useState();
   return (
     <ModalForm
       title={null}
-      open={open}
+      open={trigger ? undefined : open}
       trigger={trigger}
       form={form}
       autoFocusFirstInput
@@ -64,6 +64,7 @@ export default ({profile_id, trigger, open, requestClose}) => {
           console.log('info', info);
           if (info) {
             message.success("Đã lưu thông tin khai thác hồ sơ");
+            onSuccess?.();
             return true;
           } else {
             message.error("Không thể khai thác hồ sơ");

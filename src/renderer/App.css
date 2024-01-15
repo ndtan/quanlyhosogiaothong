@@ -23,6 +23,19 @@ body {
 .form-manipulation #plate_help {
   display: none;
 }
+.profile-detail-manipulations .ant-pro-card .ant-pro-card-body {
+  padding-inline: 4px;
+  padding-block: 0;
+}
+
+.profile-detail-manipulations .ant-pro-table-list-toolbar-container {
+  padding-block: 4px;
+  padding-inline: 0;
+}
+
+.profile-detail-manipulations .ant-table-thead .ant-table-cell {
+  padding: 4px 8px!important;
+}
 
 /*button {*/
 /*  background-color: white;*/

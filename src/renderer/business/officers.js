@@ -1,5 +1,5 @@
 export function getOfficers(params = {}) {
-  return window.electron.DB.all("SELECT id, name, date(birthday, 'unixepoch') as birthday FROM OFFICERS", params);
+  return window.electron.DB.all("SELECT id, name, date(birthday, 'unixepoch', 'localtime') as birthday FROM OFFICERS", params);
 }
 
 export function createOfficer(data = {}) {

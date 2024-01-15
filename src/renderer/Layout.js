@@ -7,7 +7,7 @@ const { Header, Content, Footer } = Layout;
 const items = [
   {key: 'profiles', label: "Hồ sơ", to: '/'},
   {key: 'manipulations', label: "Khai thác", to: '/manipulations'},
-  {key: 'return', label: "Bổ sung"},
+  {key: 'return', label: "Bổ sung", to: '/return'},
   {key: 'officers', label: "Cán bộ", to: '/officers'},
   {key: 'backup', label: "Sao lưu"}
   ];
