@@ -1,58 +1,213 @@
-import React, {useEffect, useState} from 'react';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-import { Outlet, Link } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {Breadcrumb, Layout} from 'antd';
+import {EllipsisOutlined, PlusOutlined} from '@ant-design/icons';
+import {ProTable, TableDropdown} from '@ant-design/pro-components';
+import {Button, Dropdown, Space, Tag} from 'antd';
+import {Outlet, Link} from 'react-router-dom';
+import {ProProvider, createIntl} from '@ant-design/pro-components';
 import {getOfficers} from "../../business/officers";
 import icon from "../../../../assets/icon.svg";
+import {useRef} from 'react';
+import {getProfiles} from "../../business/profiles";
+import ProfileCreate from "./ProfileCreate";
+import ProfileDetail from "./ProfileDetail";
+import ManipulateCreate from "../manipulations/ManipulateCreate";
+import ReturnProfile from "../return/ReturnProfile";
 
-export default function Officers() {
-  const [officers, setOfficers] = useState([]);
+export const waitTimePromise = async (time = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, time);
+  });
+};
 
-  useEffect(() => {
-    getOfficers({}).then(officers => setOfficers(officers));
-    // createOfficer({}).then(info => console.log('info', info))
-    //   .catch(error => console.warn(error));
-  }, []);
+export const waitTime = async (time = 100) => {
+  await waitTimePromise(time);
+};
 
-  console.log('officers', officers);
+const viVN = {
+  tableForm: {
+    search: 'Tìm kiếm',
+    reset: 'Làm lại',
+    submit: 'Đồng ý',
+    collapsed: 'Mở rộng',
+    expand: 'Thu gọn',
+    inputPlaceholder: 'Vui lòng nhập',
+    selectPlaceholder: 'Vui lòng chọn',
+  },
+  alert: {
+    clear: 'Xóa',
+  },
+  tableToolBar: {
+    leftPin: 'Ghim sang trái',
+    rightPin: 'Ghim sang phải',
+    noPin: 'Bỏ ghim',
+    leftFixedTitle: 'Cố định sang trái',
+    rightFixedTitle: 'Cố định sang phải',
+    noFixedTitle: 'Không cố định',
+    reset: 'Làm lại',
+    columnDisplay: 'Cột hiển thị',
+    columnSetting: 'Cài đặt',
+    fullScreen: 'Xem toàn màn hình',
+    exitFullScreen: 'Thu nhỏ',
+    reload: 'Tải lại dữ liệu',
+    density: 'Mật độ hiển thị',
+    densityDefault: 'Mặc định',
+    densityLarger: 'Thấp',
+    densityMiddle: 'Trung bình',
+    densitySmall: 'Cao',
+  },
+};
 
-  return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>Officers</h1>
-      {officers.map(o => <div key={o.id}>
-        <span>{o.id}</span>
-        <span>{o.name}</span>
-        <span>{o.birthday}</span>
-      </div>)}
+const columns = [
+  {
+    title: 'STT',
+    dataIndex: 'index',
+    valueType: 'indexBorder',
+    width: 48,
+    renderText: (text, record, index, action) => {
+      return index + 1;
+    },
+  },
+  {
+    title: 'Tên',
+    dataIndex: 'name',
+    fieldProps: {placeholder: "Nhập biển số xe"},
+    formItemProps: {
+      rules: [{required: true, message: 'Nhập biển số xe'}],
+    },
+  },
+  {
+    title: 'Ngày sinh',
+    key: 'birthday',
+    dataIndex: 'birthday',
+    valueType: 'date',
+    hideInSearch: true,
+    fieldProps: {placeholder: "Chọn cán bộ nhập", format: 'DD/MM/YYYY'},
+    formItemProps: {
+      rules: [{required: true, message: 'Chọn ngày nhập'}],
+    },
+  },
+  {
+    title: 'Phòng',
+    dataIndex: 'department',
+    hideInSearch: true,
+    fieldProps: {placeholder: "Nhập nội dung hồ sơ"},
+    formItemProps: {
+      rules: [{required: true, message: 'Nhập nội dung hồ sơ'}],
+    },
+  },
+  {
+    title: 'Chức vụ',
+    dataIndex: 'role',
+    hideInSearch: true,
+    fieldProps: {placeholder: "Nhập nội dung hồ sơ"},
+    formItemProps: {
+      rules: [{required: true, message: 'Nhập nội dung hồ sơ'}],
+    },
+  },
+];
 
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-        <a
-          href="https://github.com/sponsors/electron-react-boilerplate"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <button type="button">
-            <span role="img" aria-label="folded hands">
-              🙏
-            </span>
-            Donate
-          </button>
-        </a>
-      </div>
-    </div>
-  );
+function _getProfiles(params, sort, filter) {
+  return getOfficers(params, sort, filter)
+    .then(profiles => {
+      console.log('profiles', profiles);
+      return profiles
+    })
+    .then(profiles => ({
+      data: profiles,
+      success: true,
+      total: profiles.length < params.pageSize ? ((params.current - 1) * params.pageSize + profiles.length)
+        : (params.current * params.pageSize + 1)
+    }))
 }
+
+const enUSIntl = createIntl('en_US', viVN);
+
+export default () => {
+  const values = useContext(ProProvider);
+  const actionRef = useRef();
+  return (
+    <ProProvider.Provider value={{...values, intl: enUSIntl}}>
+      <ProTable
+        columns={columns}
+        actionRef={actionRef}
+        cardBordered
+        request={async (params, sort, filter) => {
+          console.log('params', params);
+          console.log('sort', sort);
+          console.log('filter', filter);
+          sort.id = 'desc';
+          await waitTime(100);
+          return _getProfiles(params, sort, filter);
+        }}
+        locale={{ emptyText: 'Không có hồ sơ nào' }}
+        // editable={{
+        //   type: 'multiple',
+        //   onSave: async (rowKey, data, row) => {
+        //     console.log(rowKey, data, row);
+        //     await waitTime(2000);
+        //     // throw "Khong the cap nhat"
+        //   },
+        // }}
+        // columnsState={{
+        //   persistenceKey: 'pro-table-singe-demos',
+        //   persistenceType: 'localStorage',
+        //   defaultValue: {
+        //     option: {fixed: 'right', disable: true},
+        //   },
+        //   onChange(value) {
+        //     console.log('value: ', value);
+        //   },
+        // }}
+        rowKey="id"
+        search={false}
+        options={{
+          fullScreen: true,
+          setting: {
+            listsHeight: 300,
+          },
+        }}
+        form={{
+          // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
+          syncToUrl: (values, type) => {
+            if (type === 'get') {
+              return {
+                ...values,
+                created_at: [values.startTime, values.endTime],
+              };
+            }
+            return values;
+          },
+        }}
+        pagination={{
+          defaultPageSize: 10, showSizeChanger: true, hideOnSinglePage: true,
+          showTotal: (total, range) => `Từ ${range[0]} đến ${range[1]} của ${total} hồ sơ`,
+          onChange: (page) => console.log(page),
+          locale: {
+            items_per_page: "Hồ sơ mỗi trang",
+            jump_to: "Nhảy đến",
+            jump_to_confirm: "Xác nhận nhảy đến",
+            page: "trang",
+            prev_page: "trang trước",
+            next_page: "trang sau",
+            page_size: "kích thước trang"
+          }
+        }}
+        dateFormatter="string"
+        headerTitle="Danh sách cán bộ"
+        toolBarRender={() => [
+          <ProfileCreate trigger={<Button
+            key="button"
+            icon={<PlusOutlined/>}
+            onClick={() => actionRef.current?.reload()}
+            type="primary"
+          >
+            Thêm mới cán bộ
+          </Button>}/>,
+        ]}
+      />
+    </ProProvider.Provider>
+  );
+};
