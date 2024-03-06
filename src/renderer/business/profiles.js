@@ -29,8 +29,8 @@ export async function createProfile(data) {
   const officer = await getOfficer(data.created_by_id);
   data.created_by = officer.name;
   return window.electron.DB.run(
-    "insert into profiles(plate,plain_plate,content,created_by_id,created_by,created_at) \
-    values ($plate,$plain_plate,$content,$created_by_id,$created_by,unixepoch($created_at, 'localtime'))", data);
+    "INSERT INTO profiles(plate,plain_plate,content,created_by_id,created_by,created_at) \
+    VALUES ($plate,$plain_plate,$content,$created_by_id,$created_by,unixepoch($created_at, 'localtime'))", data);
 }
 
 export function getProfile(id) {

@@ -3,8 +3,11 @@ export function getOfficers(params = {}) {
 }
 
 export function createOfficer(data = {}) {
+  data.birthday = data.birthday ?? null;
   // this function will return data in format {changes:1, lastInsertRowid:6}
-  return window.electron.DB.run('INSERT INTO officers (name) VALUES ($name)', {name: null});
+  return window.electron.DB.run(
+    "INSERT INTO officers(name,department,role,birthday) \
+    VALUES ($name,$department,$role,unixepoch($birthday, 'localtime'))", data);
 }
 
 export function getOfficer(id) {

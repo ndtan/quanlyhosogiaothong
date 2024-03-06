@@ -9,10 +9,8 @@ import {getOfficers} from "../../business/officers";
 import icon from "../../../../assets/icon.svg";
 import {useRef} from 'react';
 import {getProfiles} from "../../business/profiles";
-import ProfileCreate from "./ProfileCreate";
-import ProfileDetail from "./ProfileDetail";
-import ManipulateCreate from "../manipulations/ManipulateCreate";
-import ReturnProfile from "../return/ReturnProfile";
+import OfficerCreate from "./OfficerCreate";
+import OfficerDetail from "./OfficerDetail";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -109,17 +107,17 @@ const columns = [
   },
 ];
 
-function _getProfiles(params, sort, filter) {
+function _getOfficers(params, sort, filter) {
   return getOfficers(params, sort, filter)
-    .then(profiles => {
-      console.log('profiles', profiles);
-      return profiles
+    .then(officers => {
+      console.log('officers', officers);
+      return officers
     })
-    .then(profiles => ({
-      data: profiles,
+    .then(officers => ({
+      data: officers,
       success: true,
-      total: profiles.length < params.pageSize ? ((params.current - 1) * params.pageSize + profiles.length)
-        : (params.current * params.pageSize + 1)
+      // total: officers.length < params.pageSize ? ((params.current - 1) * params.pageSize + officers.length)
+      //   : (params.current * params.pageSize + 1)
     }))
 }
 
@@ -140,7 +138,7 @@ export default () => {
           console.log('filter', filter);
           sort.id = 'desc';
           await waitTime(100);
-          return _getProfiles(params, sort, filter);
+          return _getOfficers(params, sort, filter);
         }}
         locale={{ emptyText: 'Không có hồ sơ nào' }}
         // editable={{
@@ -184,7 +182,7 @@ export default () => {
         pagination={{
           defaultPageSize: 10, showSizeChanger: true, hideOnSinglePage: true,
           showTotal: (total, range) => `Từ ${range[0]} đến ${range[1]} của ${total} hồ sơ`,
-          onChange: (page) => console.log(page),
+          onChange: (page) => console.log("page", page),
           locale: {
             items_per_page: "Hồ sơ mỗi trang",
             jump_to: "Nhảy đến",
@@ -198,14 +196,15 @@ export default () => {
         dateFormatter="string"
         headerTitle="Danh sách cán bộ"
         toolBarRender={() => [
-          <ProfileCreate trigger={<Button
+          <OfficerCreate trigger={<Button
             key="button"
             icon={<PlusOutlined/>}
             onClick={() => actionRef.current?.reload()}
             type="primary"
           >
             Thêm mới cán bộ
-          </Button>}/>,
+          </Button>}
+                         onFinish={()=>actionRef.current?.reload()}/>,
         ]}
       />
     </ProProvider.Provider>

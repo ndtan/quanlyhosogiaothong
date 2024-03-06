@@ -66,8 +66,9 @@ const columns = [
     dataIndex: 'index',
     valueType: 'indexBorder',
     width: 48,
-    renderText: (text, record, index, action) => {
-      return index + 1;
+    align: 'center',
+    render: (text, record, index, action) => {
+      return record.index + 1;
     },
   },
   {
@@ -173,8 +174,12 @@ function _getProfiles(params, sort, filter) {
   return getProfiles(params, sort, filter)
     .then(profiles => {
       console.log('profiles', profiles);
-      return profiles
+      return profiles || []
     })
+    .then(profiles => profiles.map((p, index)=>({
+      ...p,
+      index: ((params.current || 1) - 1) * (params.pageSize || 10) + index
+    })))
     .then(profiles => ({
       data: profiles,
       success: true,
@@ -248,7 +253,7 @@ export default () => {
         pagination={{
           defaultPageSize: 10, showSizeChanger: true, hideOnSinglePage: true,
           showTotal: (total, range) => `Từ ${range[0]} đến ${range[1]} của ${total} hồ sơ`,
-          onChange: (page) => console.log(page),
+          onChange: (page) => console.log("page", page),
           locale: {
             items_per_page: "Hồ sơ mỗi trang",
             jump_to: "Nhảy đến",

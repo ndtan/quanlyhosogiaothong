@@ -7,7 +7,7 @@ export function getManipulations(params) {
 }
 
 export function getManipulationsReturn(params) {
-  return window.electron.DB.all("SELECT *, datetime(manipulated_at, 'unixepoch', 'localtime') as manipulated_at, datetime(return_at, 'unixepoch', 'localtime') as return_at FROM manipulations m WHERE return_by_id is not null ORDER BY m.return_at desc LIMIT 100");
+  return window.electron.DB.all("SELECT *, datetime(manipulated_at, 'unixepoch', 'localtime') as manipulated_at, datetime(return_at, 'unixepoch', 'localtime') as return_at FROM manipulations WHERE return_by_id is not null ORDER BY return_at desc LIMIT 100");
 }
 
 export function getManipulationsByProfileId(profile_id) {

@@ -135,8 +135,8 @@ function _getManipulations(params, sort, filter) {
     .then(manipulations => ({
       data: manipulations,
       success: true,
-      total: manipulations.length < params.pageSize ? ((params.current - 1) * params.pageSize + manipulations.length)
-        : (params.current * params.pageSize + 1)
+      // total: manipulations.length < params.pageSize ? ((params.current - 1) * params.pageSize + manipulations.length)
+      //   : (params.current * params.pageSize + 1)
     }));
 }
 
