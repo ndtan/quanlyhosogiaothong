@@ -11,6 +11,8 @@ import {getOfficers} from "../../business/officers";
 import {ProFormDatePicker} from "@ant-design/pro-form";
 import React, {useEffect, useState} from "react";
 import {createProfile} from "../../business/profiles";
+import OfficerCreate from "../officers/OfficerCreate";
+
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -20,7 +22,7 @@ const waitTime = (time = 100) => {
   });
 };
 
-export default ({trigger}) => {
+export default ({trigger, onFinish}) => {
   const [form] = Form.useForm();
   return (
     <ModalForm
@@ -40,6 +42,7 @@ export default ({trigger}) => {
           console.log('info', info);
           if (info) {
             message.success('Đã thêm hồ sơ');
+            onFinish?.();
             return true;
           } else {
             message.error("Không thể thêm hồ sơ. Vui lòng kiểm tra thông tin và thử lại.");

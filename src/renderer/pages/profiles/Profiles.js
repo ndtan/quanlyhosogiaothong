@@ -270,13 +270,11 @@ export default () => {
           <ProfileCreate trigger={<Button
             key="button"
             icon={<PlusOutlined/>}
-            onClick={() => {
-              actionRef.current?.reload();
-            }}
             type="primary"
           >
             Thêm mới hồ sơ
-          </Button>}/>,
+          </Button>}
+                         onFinish={()=>actionRef.current?.reload()}/>,
           // <Dropdown
           //   key="menu"
           //   menu={{

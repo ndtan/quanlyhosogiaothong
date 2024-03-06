@@ -199,7 +199,6 @@ export default () => {
           <OfficerCreate trigger={<Button
             key="button"
             icon={<PlusOutlined/>}
-            onClick={() => actionRef.current?.reload()}
             type="primary"
           >
             Thêm mới cán bộ

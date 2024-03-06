@@ -1,15 +1,35 @@
 import Database from 'better-sqlite3';
 import {app} from "electron";
 import path from "path";
+import {readFileSync} from "node:fs";
+
+function createDatabase(dbPath) {
+  console.log("Creating database at " + dbPath);
+  const db = new Database(dbPath, { verbose: console.log, fileMustExist: false });
+  db.pragma('journal_mode = WAL');
+  const database = readFileSync(path.join(__dirname, 'migrations', 'database.sql'), 'utf8');
+  console.log('database', database);
+  db.exec(database);
+  const places = readFileSync(path.join(__dirname, 'migrations', 'places.sql'), 'utf8');
+  console.log('places', places);
+  db.exec(places);
+  console.log("Database created");
+  return db;
+}
 
 function connectDB() {
   const dbPath = app.isPackaged
-    ? path.join(__dirname, 'quanlyhosogiaothong.sqlite3')
-    : path.join(__dirname, '../../quanlyhosogiaothong.sqlite3');
+    ? path.join(__dirname, 'quanlyhosogiaothong2.sqlite3')
+    : path.join(__dirname, '../../quanlyhosogiaothong2.sqlite3');
   console.log("Connecting to database at " + dbPath);
-  const db = new Database(dbPath, { verbose: console.log, fileMustExist: false });
-  db.pragma('journal_mode = WAL');
-  console.log("Database connected");
+  let db;
+  try {
+    db = new Database(dbPath, { verbose: console.log, fileMustExist: true });
+    db.pragma('journal_mode = WAL');
+    console.log("Database connected");
+  } catch (e) {
+    db = createDatabase(dbPath);
+  }
   return db;
 }
 

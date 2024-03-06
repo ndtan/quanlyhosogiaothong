@@ -130,6 +130,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
@@ -140,7 +141,6 @@ app
     ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
     ipcMain.handle('DBGet', (event, sql, params) => DBGet(sql, params));
     ipcMain.handle('DBRun', (event, sql, params) => DBRun(sql, params));
-    // ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
 
   })
   .catch(console.log);

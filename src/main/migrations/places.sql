@@ -1,9 +1,3 @@
--- SELECT id, name, datetime(birthday, 'unixepoch'), birthday FROM OFFICERS
--- insert into officers(name, birthday) values ('Nguyen Minh Anh', unixepoch('1989-04-01', 'localtime'))
--- SELECT *, date(created_at, 'unixepoch', 'localtime') as created_at FROM profiles
--- select datetime(unixepoch(), 'unixepoch', 'localtime'), unixepoch(), unixepoch('subsec'), current_timestamp;
--- select datetime(unixepoch('2024-01-10 00:12:00', 'utc'), 'unixepoch', 'localtime')
--- select unixepoch('1989-04-01', 'localtime')
 INSERT INTO places(name, type, code) values ('Quy Nhơn, Bình Định','BDIQN','Thành phố');
 INSERT INTO places(name, type, code) values ('An Nhơn, Bình Định','BDIAN','Thị xã');
 INSERT INTO places(name, type, code) values ('Hoài Nhơn, Bình Định','BDIHN','Thị xã');
@@ -77,4 +71,3 @@ INSERT INTO places(name, type, code) values ('Hậu Giang','HAG','Tỉnh');
 INSERT INTO places(name, type, code) values ('Sóc Trăng','STR','Tỉnh');
 INSERT INTO places(name, type, code) values ('Bạc Liêu','BLI','Tỉnh');
 INSERT INTO places(name, type, code) values ('Cà Mau','CMU','Tỉnh');
-
