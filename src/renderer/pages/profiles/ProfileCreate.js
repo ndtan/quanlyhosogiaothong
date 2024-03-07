@@ -8,7 +8,7 @@ import {
 } from '@ant-design/pro-components';
 import {Button, Form, message} from 'antd';
 import {getOfficers} from "../../business/officers";
-import {ProFormDatePicker} from "@ant-design/pro-form";
+import {ProFormDatePicker, ProFormDigit} from "@ant-design/pro-form";
 import React, {useEffect, useState} from "react";
 import {createProfile} from "../../business/profiles";
 import OfficerCreate from "../officers/OfficerCreate";
@@ -36,6 +36,12 @@ export default ({trigger, onFinish}) => {
       }}
       submitTimeout={2000}
       submitter={{searchConfig: {resetText: "Hủy", submitText: "Thêm hồ sơ"}}}
+      onValuesChange={(changeValues) => {
+        console.log(changeValues);
+        if (changeValues.created_by_id === 0) {
+          document.getElementById('show-add-officer').click();
+        }
+      }}
       onFinish={async (values) => {
         try {
           const info = await createProfile(values);
@@ -65,16 +71,35 @@ export default ({trigger, onFinish}) => {
             rules: [{required: true, message: 'Nhập biển số xe'}],
           }}
         />
-        <ProFormSelect
-          request={async () => getOfficers({}).then(officers => officers.map(o => ({value: o.id, label: o.name})))}
-          width="md"
-          name="created_by_id"
-          label="Cán bộ nhập"
-          placeholder="Chọn cán bộ nhập"
-          formItemProps={{
-            rules: [{required: true, message: 'Chọn cán bộ nhập'}],
+
+        <ProForm.Item noStyle shouldUpdate>
+          {(form) => {
+            return <ProFormSelect
+              params={{id: form.getFieldValue('created_by_id')}}
+              request={async () => getOfficers({})
+                .then(officers => officers.map(o => ({value: o.id, label: o.name})))
+                .then(officers => [{value: 0, label: <span style={{fontStyle: 'italic'}}>--- Thêm mới cán bộ ---</span>},...officers])
+              }
+              width="md"
+              name="created_by_id"
+              label="Cán bộ nhập"
+              placeholder="Chọn cán bộ nhập"
+              formItemProps={{
+                rules: [{required: true, message: 'Chọn cán bộ nhập'}],
+              }}
+            />
           }}
-        />
+        </ProForm.Item>
+
+        <ProForm.Item noStyle shouldUpdate hidden={true}>
+          {(form) => {
+            return <OfficerCreate
+              trigger={<Button key="button" icon={<PlusOutlined/>} id={'show-add-officer'}>Thêm mới</Button>}
+              onFinish={(info)=>form.setFieldValue('created_by_id', info.lastInsertRowid)}
+              onCancel={()=>form.resetFields(["created_by_id"])}/>
+          }}
+        </ProForm.Item>
+
       </ProForm.Group>
       <ProForm.Group>
         <ProFormSelect

@@ -13,7 +13,7 @@ const waitTime = (time = 100) => {
   });
 };
 
-export default ({trigger, onFinish}) => {
+export default ({trigger, onFinish, onCancel}) => {
   const [form] = Form.useForm();
   return (
     <ModalForm
@@ -23,7 +23,7 @@ export default ({trigger, onFinish}) => {
       autoFocusFirstInput
       modalProps={{
         destroyOnClose: true,
-        onCancel: () => console.log('cancel'),
+        onCancel: () => onCancel?.(),
       }}
       submitTimeout={2000}
       submitter={{searchConfig: {resetText: "Hủy", submitText: "Thêm cán bộ"}}}
@@ -34,7 +34,7 @@ export default ({trigger, onFinish}) => {
           console.log('info', info);
           if (info) {
             message.success('Đã thêm hồ sơ');
-            onFinish?.();
+            onFinish?.(info);
             return true;
           } else {
             message.error("Không thể thêm hồ sơ. Vui lòng kiểm tra thông tin và thử lại.");
