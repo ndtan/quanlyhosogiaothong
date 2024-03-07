@@ -1,26 +1,32 @@
 import Database from 'better-sqlite3';
 import {app} from "electron";
 import path from "path";
-import {readFileSync} from "node:fs";
+import {readFileSync, existsSync, mkdirSync, writeFileSync} from "node:fs";
+// import database from '!raw-loader!.\\migrations\\database.js';
+// import places from '!raw-loader!.\\migrations\\places.js';
 
-function createDatabase(dbPath) {
+function createDatabase(dbFolder, dbFile) {
+  console.log("Creating folder " + dbFolder);
+  if (!existsSync(dbFolder)) mkdirSync(dbFolder,{ recursive: true });
+  const dbPath = path.join(dbFolder, dbFile);
   console.log("Creating database at " + dbPath);
   const db = new Database(dbPath, { verbose: console.log, fileMustExist: false });
   db.pragma('journal_mode = WAL');
-  const database = readFileSync(path.join(__dirname, 'migrations', 'database.sql'), 'utf8');
-  console.log('database', database);
+  const migrationsPath = app.isPackaged ? path.join(__dirname, '..', '..', '..', 'migrations') : path.join(__dirname, 'migrations');
+  const database = readFileSync(path.join(migrationsPath, 'database.sql'), 'utf8');
+  console.log('Migrate database', database);
   db.exec(database);
-  const places = readFileSync(path.join(__dirname, 'migrations', 'places.sql'), 'utf8');
-  console.log('places', places);
+  const places = readFileSync(path.join(migrationsPath, 'places.sql'), 'utf8');
+  console.log('Migrate places', places);
   db.exec(places);
   console.log("Database created");
   return db;
 }
 
 function connectDB() {
-  const dbPath = app.isPackaged
-    ? path.join(__dirname, 'quanlyhosogiaothong2.sqlite3')
-    : path.join(__dirname, '../../quanlyhosogiaothong2.sqlite3');
+  const dbFolder = app.isPackaged ? path.join(process.env.APPDATA, 'QuanLyHoSoGiaoThong', 'database') : path.join(__dirname, '..', '..');
+  const dbFile = 'QuanLyHoSoGiaoThong.sqlite3';
+  const dbPath = path.join(dbFolder, dbFile);
   console.log("Connecting to database at " + dbPath);
   let db;
   try {
@@ -28,7 +34,7 @@ function connectDB() {
     db.pragma('journal_mode = WAL');
     console.log("Database connected");
   } catch (e) {
-    db = createDatabase(dbPath);
+    db = createDatabase(dbFolder, dbFile);
   }
   return db;
 }

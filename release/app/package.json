@@ -1,12 +1,12 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "QuanLyHoSoGiaoThong",
+  "version": "1.0.2",
+  "description": "Hệ thống quản lý hồ sơ giao thông",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Nguyen Duy Tan",
+    "email": "ndtan007@gmail.com",
+    "url": "https://tannguyenduy.com"
   },
   "main": "./dist/main/main.js",
   "scripts": {

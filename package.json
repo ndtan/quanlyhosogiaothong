@@ -1,5 +1,5 @@
 {
-  "description": "A foundation for scalable desktop apps",
+  "description": "He thong quan ly ho so giao thong",
   "keywords": [
     "electron",
     "boilerplate",
@@ -155,6 +155,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "mini-css-extract-plugin": "^2.7.6",
     "prettier": "^3.0.3",
+    "raw-loader": "^4.0.2",
     "react-refresh": "^0.14.0",
     "react-test-renderer": "^18.2.0",
     "rimraf": "^5.0.1",
@@ -175,8 +176,9 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Quản lý hồ sơ giao thông",
+    "appId": "com.tannguyenduy.quanlyhosogiaothong",
+    "buildVersion": "1.0",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -230,7 +232,8 @@
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./migrations/**"
     ],
     "publish": {
       "provider": "github",

@@ -9,7 +9,7 @@ const items = [
   {key: 'manipulations', label: "Khai thác", to: '/manipulations'},
   {key: 'return', label: "Bổ sung", to: '/return'},
   {key: 'officers', label: "Cán bộ", to: '/officers'},
-  {key: 'backup', label: "Sao lưu"}
+  // {key: 'backup', label: "Sao lưu"}
   ];
 
 export default function ({props}) {
