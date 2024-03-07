@@ -1,9 +1,7 @@
 import Database from 'better-sqlite3';
 import {app} from "electron";
-import path from "path";
-import {readFileSync, existsSync, mkdirSync, writeFileSync} from "node:fs";
-// import database from '!raw-loader!.\\migrations\\database.js';
-// import places from '!raw-loader!.\\migrations\\places.js';
+import path from 'path';
+import {readFileSync, existsSync, mkdirSync} from "node:fs";
 
 function createDatabase(dbFolder, dbFile) {
   console.log("Creating folder " + dbFolder);
