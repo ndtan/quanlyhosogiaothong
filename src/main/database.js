@@ -10,26 +10,39 @@ function createDatabase(dbFolder, dbFile) {
   console.log("Creating database at " + dbPath);
   const db = new Database(dbPath, { verbose: console.log, fileMustExist: false });
   db.pragma('journal_mode = WAL');
-  const migrationsPath = app.isPackaged ? path.join(__dirname, '..', '..', '..', 'migrations') : path.join(__dirname, 'migrations');
-  const database = readFileSync(path.join(migrationsPath, 'database.sql'), 'utf8');
-  console.log('Migrate database', database);
-  db.exec(database);
-  const places = readFileSync(path.join(migrationsPath, 'places.sql'), 'utf8');
-  console.log('Migrate places', places);
-  db.exec(places);
+  migrateDatabase(db);
   console.log("Database created");
   return db;
 }
 
+function migrateDatabase(db) {
+  console.log("Migrating database");
+  const tables = db.prepare("SELECT * FROM main.sqlite_master WHERE type = $type").all({type: 'table'});
+  if (tables.length === 0) {
+    const migrationsPath = app.isPackaged ? path.join(__dirname, '..', '..', '..', 'migrations') : path.join(__dirname, '..', '..', 'migrations');
+    const database = readFileSync(path.join(migrationsPath, 'database.sql'), 'utf8');
+    console.log('Migrating database', database);
+    db.exec(database);
+    const places = readFileSync(path.join(migrationsPath, 'places.sql'), 'utf8');
+    console.log('Migrating places', places);
+    db.exec(places);
+  }
+  console.log("Database migrated");
+  return db;
+}
+
+let db;
+
 function connectDB() {
+  if (db) return db;
   const dbFolder = app.isPackaged ? path.join(process.env.APPDATA, 'QuanLyHoSoGiaoThong', 'database') : path.join(__dirname, '..', '..');
   const dbFile = 'QuanLyHoSoGiaoThong.sqlite3';
   const dbPath = path.join(dbFolder, dbFile);
   console.log("Connecting to database at " + dbPath);
-  let db;
   try {
     db = new Database(dbPath, { verbose: console.log, fileMustExist: true });
     db.pragma('journal_mode = WAL');
+    migrateDatabase(db);
     console.log("Database connected");
   } catch (e) {
     db = createDatabase(dbFolder, dbFile);
