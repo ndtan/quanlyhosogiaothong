@@ -32,6 +32,7 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
           if (info) {
             message.success("Đã bổ sung hồ sơ");
             onSuccess?.();
+            requestClose?.();
             return true;
           } else {
             message.error("Không thể bổ sung hồ sơ");

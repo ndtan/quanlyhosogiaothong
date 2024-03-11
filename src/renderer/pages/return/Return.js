@@ -204,7 +204,8 @@ export default () => {
             />
           </ProForm.Group>
         </ProForm>
-        <ReturnProfile profile_id={profile?.id} open={modalVisit} requestClose={()=>setModalVisit(false)} />
+        <ReturnProfile profile_id={profile?.id} onSuccess={()=>actionRef.current?.reload()}
+                       open={modalVisit} requestClose={()=>setModalVisit(false)} />
       </ProCard>
 
       <ProTable

@@ -43,8 +43,8 @@ export default function ({props}) {
         <Outlet />
       </div>
     </Content>
-    <Footer style={{ fontSize: 12, textAlign: 'left', padding: 2, borderTopWidth: 1, borderTopColor:'#DDD', borderTopStyle: "solid" }}>
-      Hệ thống quản lý hồ sơ giao thông ©{new Date().getFullYear()} Cung cấp bởi Livesoft
+    <Footer style={{ fontSize: 12, textAlign: 'center', padding: 2, borderTopWidth: 1, borderTopColor:'#DDD', borderTopStyle: "solid" }}>
+      Phiên bản: 1.0.3 - Hệ thống quản lý hồ sơ giao thông ©{new Date().getFullYear()} Cung cấp bởi Livesoft - SĐT: 0942495797
     </Footer>
   </Layout>
 }

@@ -11,6 +11,7 @@ import {useRef} from 'react';
 import {createProfile, getProfileByPlate, getProfiles} from "../../business/profiles";
 import ManipulateCreate from "./ManipulateCreate";
 import {getManipulations} from "../../business/manipulations";
+import ReturnProfile from "../return/ReturnProfile";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -121,7 +122,8 @@ const columns = [
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => [
-      <a key="detail" onClick={() => {}}>Bổ sung</a>,
+      <ReturnProfile key="return" profile_id={record.profile_id} onSuccess={() => action.reload()}
+                     trigger={<a key="return" onClick={() => {}}>Bổ sung</a>} />
     ],
   },
 ];
@@ -188,7 +190,8 @@ export default () => {
             />
           </ProForm.Group>
         </ProForm>
-        <ManipulateCreate profile_id={profile?.id} open={modalVisit} requestClose={()=>setModalVisit(false)} />
+        <ManipulateCreate profile_id={profile?.id} onSuccess={()=>actionRef.current?.reload()}
+                          open={modalVisit} requestClose={()=>setModalVisit(false)} />
       </ProCard>
 
       <ProTable
@@ -229,9 +232,7 @@ export default () => {
         dateFormatter="string"
         headerTitle="Hồ sơ đang khai thác"
         toolBarRender={() => [
-          <a key="export" onClick={() => {}}>
-            Xuất danh sách
-          </a>,
+          <a key="export" onClick={() => {}}>Xuất danh sách</a>,
         ]}
       />
     </ProProvider.Provider>
