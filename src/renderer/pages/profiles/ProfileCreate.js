@@ -105,13 +105,17 @@ export default ({trigger, onFinish}) => {
         <ProFormSelect
           options={[
             {value: "Xe đăng ký lần đầu", label: "Xe đăng ký lần đầu"},
+            {value: "Xe đổi biển", label: "Xe đổi biển"},
+            {value: "Xe sang tên (Quy Nhơn)", label: "Xe sang tên (Quy Nhơn)"},
+            {value: "Xe chuyển đến", label: "Xe chuyển đến"},
+            {value: "Xe tịch thu", label: "Xe tịch thu"},
+            {value: "Xe 175 cm", label: "Xe 175 cm"},
+            {value: "Xe đấu giá", label: "Xe đấu giá"},
             {value: "Xe biển số định danh lần 1", label: "Xe biển số định danh lần 1"},
             {value: "Xe biển số định danh lần 2", label: "Xe biển số định danh lần 2"},
             {value: "Xe biển số định danh lần 3", label: "Xe biển số định danh lần 3"},
             {value: "Xe biển số định danh lần 4", label: "Xe biển số định danh lần 4"},
             {value: "Xe biển số định danh lần 5", label: "Xe biển số định danh lần 5"},
-            {value: "Xe tịch thu", label: "Xe tịch thu"},
-            {value: "Xe 175 cm", label: "Xe 175 cm"},
           ]}
           width="md"
           name="content"

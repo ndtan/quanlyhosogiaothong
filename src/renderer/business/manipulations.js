@@ -17,7 +17,7 @@ export function getManipulationsByProfileId(profile_id) {
 export async function createManipulation(profile_id, data) {
   const profile = await getProfile(profile_id);
   if (!profile) throw "Không tìm thấy cán bộ khai thác hồ sơ";
-  if (profile.last_action && profile.last_action !== 'return') throw "Hồ sơ đang được khai thác bởi một cán bộ khác";
+  if (profile.last_action && profile.last_action !== 'Đã bổ sung') throw "Hồ sơ đang được khai thác bởi một cán bộ khác";
   data.profile_id = profile_id;
   data.plate = profile.plate;
   data.plain_plate = profile.plain_plate;
@@ -62,6 +62,6 @@ export async function returnProfile(profile_id, return_by_id, return_at) {
   const info = await window.electron.DB.run("UPDATE manipulations SET return_by_id=$return_by_id,return_by=$return_by,return_at=unixepoch($return_at, 'utc') WHERE id=$id",
     {id: manipulation.id, return_by_id, return_by: officer.name, return_at});
   const infoUpdate = await window.electron.DB.run("UPDATE profiles SET last_action = $last_action WHERE id=$id",
-    {id: profile_id, last_action: 'return'});
+    {id: profile_id, last_action: 'Đã bổ sung'});
   return info;
 }

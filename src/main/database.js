@@ -18,14 +18,19 @@ function createDatabase(dbFolder, dbFile) {
 function migrateDatabase(db) {
   console.log("Migrating database");
   const tables = db.prepare("SELECT * FROM main.sqlite_master WHERE type = $type").all({type: 'table'});
+  const migrationsPath = app.isPackaged ? path.join(__dirname, '..', '..', '..', 'migrations')
+    : path.join(__dirname, '..', '..', 'migrations');
   if (tables.length === 0) {
-    const migrationsPath = app.isPackaged ? path.join(__dirname, '..', '..', '..', 'migrations') : path.join(__dirname, '..', '..', 'migrations');
     const database = readFileSync(path.join(migrationsPath, 'database.sql'), 'utf8');
     console.log('Migrating database', database);
     db.exec(database);
     const places = readFileSync(path.join(migrationsPath, 'places.sql'), 'utf8');
     console.log('Migrating places', places);
     db.exec(places);
+  } else {
+    const profiles_rename_action_return = readFileSync(path.join(migrationsPath, 'profiles_rename_action_return.sql'), 'utf8');
+    console.log('Renaming last action return to Da bo sung', profiles_rename_action_return);
+    db.exec(profiles_rename_action_return);
   }
   console.log("Database migrated");
   return db;

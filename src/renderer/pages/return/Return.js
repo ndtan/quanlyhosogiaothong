@@ -182,7 +182,7 @@ export default () => {
                 message.error("Không tìm thấy biển số xe.")
                 return false;
               }
-              if (profile.last_action == null || profile.last_action === 'return') {
+              if (profile.last_action == null || profile.last_action === 'Đã bổ sung') {
                 message.error("Xe chưa được khai thác.")
                 return false;
               }

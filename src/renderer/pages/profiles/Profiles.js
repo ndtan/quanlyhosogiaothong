@@ -138,7 +138,7 @@ const columns = [
     hideInSearch: true,
     hideInform: true,
     fieldProps: {placeholder: "Chọn trạng thái khai thác"},
-    renderText: (text => text === 'return' ? '' : text?.length === 0 ? '' : text)
+    renderText: (text => text === 'Đã bổ sung' ? '' : text?.length === 0 ? '' : text)
   },
   {
     title: 'Tùy chọn',
@@ -153,7 +153,7 @@ const columns = [
       //   Edit
       // </a>,
       <ProfileDetail key="detail" profile_id={record.id} trigger={<a key="detail" onClick={() => {}}>Chi tiết</a>} />,
-      (record.last_action === null || record.last_action === 'return') ?
+      (record.last_action === null || record.last_action === 'Đã bổ sung') ?
         <ManipulateCreate key="manipulate" profile_id={record.id} onSuccess={() => action.reload()}
                           trigger={<a key="detail" onClick={() => {}}>Khai thác</a>} />
         : <ReturnProfile key="return" profile_id={record.id} onSuccess={() => action.reload()}

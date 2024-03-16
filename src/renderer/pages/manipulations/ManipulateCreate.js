@@ -108,9 +108,9 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
         <ProFormSelect
           options={[
             {value: 'Cấp đổi', label: 'Cấp đổi'},
-            {value: 'Thu hồi', label: 'Thu hồi'},
+            {value: 'Thu hồi (Quy Nhơn)', label: 'Thu hồi (Quy Nhơn)'},
+            {value: 'Thu hồi khác điểm', label: 'Thu hồi khác điểm'},
             {value: 'Chuyển gốc', label: 'Chuyển gốc'},
-            {value: 'Đổi biển', label: 'Đổi biển'},
             {value: 'Chỉ đạo cấp trên', label: 'Chỉ đạo cấp trên'},
             {value: 'Có thông báo QĐ tịch thu', label: 'Có thông báo QĐ tịch thu'},
             {value: 'Hết niên hạn, hỏng...', label: 'Hết niên hạn, hỏng...'},
@@ -123,6 +123,8 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
             rules: [{required: true, message: 'Chọn lý do khai thác'}],
           }}
         />
+      </ProForm.Group>
+      <ProForm.Group>
         <ProForm.Item noStyle shouldUpdate>
           {(form) => {
             const action = form.getFieldValue('action');
@@ -136,7 +138,7 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
                 {value: 'Đổi màu sơn', label: 'Đổi màu sơn'},
                 {value: 'Xe cải tạo', label: 'Xe cải tạo'},
               ]
-            } else if (action === 'Thu hồi') {
+            } else if (action === 'Thu hồi (Quy Nhơn)' || action === 'Thu hồi khác điểm') {
               options = [
                 {value: 'Chuyển quyền sở hữu', label: 'Chuyển quyền sở hữu'},
                 {value: 'Xe trộm cắp', label: 'Xe trộm cắp'},
@@ -158,8 +160,6 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
             );
           }}
         </ProForm.Item>
-      </ProForm.Group>
-      <ProForm.Group>
         <ProForm.Item noStyle shouldUpdate>
           {(form) => {
             const action = form.getFieldValue('action');
@@ -177,10 +177,11 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
         <ProForm.Item noStyle shouldUpdate>
           {(form) => {
             const action = form.getFieldValue('action');
-            if (action === 'Thu hồi' || action === 'Chuyển gốc' || action === 'Hết niên hạn, hỏng...') {
+            if (action === 'Thu hồi (Quy Nhơn)' || action === 'Thu hồi khác điểm' || action === 'Chuyển gốc' || action === 'Hết niên hạn, hỏng...') {
               return <ProFormSelect
                 name="place_id"
-                label={action === 'Thu hồi' ? "Nơi đến" : action === 'Chuyển gốc' ? "Nơi chuyển gốc" : "Nơi cấp"}
+                label={(action === 'Thu hồi (Quy Nhơn)' || action === 'Thu hồi khác điểm') ? "Nơi đến"
+                  : action === 'Chuyển gốc' ? "Nơi chuyển gốc" : "Nơi cấp"}
                 mode={'single'}
                 width="md"
                 showSearch={true}
@@ -210,7 +211,8 @@ export default ({profile_id, trigger, open, requestClose, onSuccess}) => {
                 formItemProps={{
                   rules: [{
                     required: true,
-                    message: action === 'Thu hồi' ? "Chọn nơi đến" : action === 'Chuyển gốc' ? "Chọn nơi chuyển gốc" : "Chọn nơi cấp"
+                    message: (action === 'Thu hồi (Quy Nhơn)' || action === 'Thu hồi khác điểm') ? "Chọn nơi đến"
+                      : action === 'Chuyển gốc' ? "Chọn nơi chuyển gốc" : "Chọn nơi cấp"
                   }]
                 }}
               />
