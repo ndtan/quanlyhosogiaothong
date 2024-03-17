@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Breadcrumb, Layout} from 'antd';
-import {EllipsisOutlined, PlusOutlined} from '@ant-design/icons';
+import {EllipsisOutlined, PlusOutlined, CloudUploadOutlined} from '@ant-design/icons';
 import {ProTable, TableDropdown} from '@ant-design/pro-components';
 import {Button, Dropdown, Space, Tag} from 'antd';
 import {Outlet, Link} from 'react-router-dom';
@@ -13,6 +13,7 @@ import ProfileCreate from "./ProfileCreate";
 import ProfileDetail from "./ProfileDetail";
 import ManipulateCreate from "../manipulations/ManipulateCreate";
 import ReturnProfile from "../return/ReturnProfile";
+import ProfileImport from "./ProfileImport";
 
 export const waitTimePromise = async (time = 100) => {
   return new Promise((resolve) => {
@@ -267,13 +268,9 @@ export default () => {
         dateFormatter="string"
         headerTitle="Hồ sơ phương tiện giao thông"
         toolBarRender={() => [
-          <ProfileCreate trigger={<Button
-            key="button"
-            icon={<PlusOutlined/>}
-            type="primary"
-          >
-            Thêm mới hồ sơ
-          </Button>}
+          <ProfileImport trigger={<Button key="button" icon={<CloudUploadOutlined />}>Nhập hồ sơ từ file excel</Button>}
+                         onFinish={()=>actionRef.current?.reload()}/>,
+          <ProfileCreate trigger={<Button key="button" icon={<PlusOutlined/>} type="primary">Thêm mới hồ sơ</Button>}
                          onFinish={()=>actionRef.current?.reload()}/>,
           // <Dropdown
           //   key="menu"
