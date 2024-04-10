@@ -11,7 +11,6 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import Database from 'better-sqlite3';
 import path from 'path';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -115,32 +114,46 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
+const gotTheLock = app.requestSingleInstanceLock()
 
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app
-  .whenReady()
-  .then(() => {
-
-    createWindow();
-    app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
-    });
-
-    ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
-    ipcMain.handle('DBGet', (event, sql, params) => DBGet(sql, params));
-    ipcMain.handle('DBRun', (event, sql, params) => DBRun(sql, params));
-
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
   })
-  .catch(console.log);
+
+  /**
+   * Add event listeners...
+   */
+
+  app.on('window-all-closed', () => {
+    // Respect the OSX convention of having the application in memory even
+    // after all windows have been closed
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
+  app
+    .whenReady()
+    .then(() => {
+
+      createWindow();
+      app.on('activate', () => {
+        // On macOS it's common to re-create a window in the app when the
+        // dock icon is clicked and there are no other windows open.
+        if (mainWindow === null) createWindow();
+      });
+
+      ipcMain.handle('DBAll', (event, sql, params) => DBAll(sql, params));
+      ipcMain.handle('DBGet', (event, sql, params) => DBGet(sql, params));
+      ipcMain.handle('DBRun', (event, sql, params) => DBRun(sql, params));
+
+    })
+    .catch(console.log);
+}
