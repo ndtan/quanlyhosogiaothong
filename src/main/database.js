@@ -31,6 +31,10 @@ function migrateDatabase(db) {
     const profiles_rename_action_return = readFileSync(path.join(migrationsPath, 'profiles_rename_action_return.sql'), 'utf8');
     console.log('Renaming last action return to Da bo sung', profiles_rename_action_return);
     db.exec(profiles_rename_action_return);
+    const manipulations_rename_action_thuhoi = readFileSync(path.join(migrationsPath, 'manipulations_rename_action_thuhoi.sql'), 'utf8');
+    console.log('Renaming last action return to Da bo sung', manipulations_rename_action_thuhoi);
+    db.exec(manipulations_rename_action_thuhoi);
+
   }
   console.log("Database migrated");
   return db;
