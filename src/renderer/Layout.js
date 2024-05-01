@@ -9,8 +9,46 @@ const items = [
   {key: 'manipulations', label: "Khai thác", to: '/manipulations'},
   {key: 'return', label: "Bổ sung", to: '/return'},
   {key: 'officers', label: "Cán bộ", to: '/officers'},
-  // {key: 'backup', label: "Sao lưu"}
-  ];
+  {
+    key: 'reports',
+    label: "Báo cáo",
+    children: [
+      {
+        label: 'Số liệu tổng hợp hồ sơ',
+        key: '/reports/solieutonghoso',
+      },
+      {
+        label: 'Khai thác hàng ngày',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách xe đăng ký lần đầu',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách xe hết niên hạn',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách xe có thông báo quyết định tịch thu',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách hồ sơ chuyển gốc',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách hồ sơ thu hồi',
+        key: 'setting:2',
+      },
+      {
+        label: 'Danh sách hồ sơ chưa bổ sung',
+        key: 'setting:2',
+      },
+    ]
+  },
+  {key: 'backup', label: "Sao lưu", onClick: () => alert("Chức năng này đang được thực hiện trong các phiên bản tiếp theo.")}
+];
 
 export default function ({props}) {
   const navigate = useNavigate();
@@ -34,7 +72,8 @@ export default function ({props}) {
         style={{ flex: 1, minWidth: 0 }}
         onClick={({ _, key, keyPath }) => {
           const item = items.find(i=>i.key === key);
-          navigate(item.to , { replace: true });
+          if (item && item.to) navigate(item.to , { replace: true });
+          else navigate(key , { replace: true });
         }}
       />
     </Header>

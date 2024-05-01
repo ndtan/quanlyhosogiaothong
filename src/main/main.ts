@@ -117,7 +117,7 @@ const createWindow = async () => {
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
-  app.quit()
+  app.quit();
 } else {
   app.on('second-instance', (event, commandLine, workingDirectory) => {
     // Someone tried to run a second instance, we should focus our window.
@@ -130,7 +130,6 @@ if (!gotTheLock) {
   /**
    * Add event listeners...
    */
-
   app.on('window-all-closed', () => {
     // Respect the OSX convention of having the application in memory even
     // after all windows have been closed

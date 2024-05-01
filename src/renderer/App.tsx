@@ -18,6 +18,7 @@ export default function App() {
           <Route path={"manipulations"} element={<Manipulations />} />
           <Route path={"return"} element={<Return />} />
           <Route path={"officers"} element={<Officers />} />
+          <Route path={"reports/solieutonghoso"} element={<Officers />} />
         </Route>
       </Routes>
     </Router>
